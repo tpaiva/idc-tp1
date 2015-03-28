@@ -40,7 +40,6 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 
 	public GuiRFID() {
 		super("RFID");
-		setLookAndFeel();
 		setSize(1000, 700); // (width, height)
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen
