@@ -255,20 +255,17 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 					|| selectedMetric.equals("Ambas")) {
 				System.out.println("Calculo da Taxa de Leitura");
 				resultsTextArea.append("> Cálculo da Taxa de Leitura\n\n");
-				
-				HashMap<String, Double> tagReadRate = performanceTest.getIndividualReadRate(10);
-				resultsTextArea.append(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));
-
+				HashMap<String, Double> tagSuccessRate = performanceTest.getIndividualSuccessRate(10);
+				resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
 			}
 	
 			if (selectedMetric.equals("Taxa de Sucesso")
 					|| selectedMetric.equals("Ambas")) {
 				System.out.println("Calculo da Taxa de Leitura");
 				resultsTextArea.append("> Cálculo da Taxa de Sucesso\n\n");
-				
-				HashMap<String, Double> tagSuccessRate = performanceTest.getIndividualSuccessRate(10);
-				resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
-
+	
+				HashMap<String, Double> tagReadRate = performanceTest.getIndividualReadRate(10);
+				resultsTextArea.append(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));
 			}
 		} catch(AlienReaderException e) {
 			resultsTextArea.append("Error: " + e.toString());

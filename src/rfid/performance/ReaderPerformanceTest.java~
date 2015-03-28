@@ -20,14 +20,13 @@ public class ReaderPerformanceTest {
 		reader.setPassword("password");
 		reader.open();
 
-	/*
 		HashMap<String, Double> tagSuccessRate = getIndividualSuccessRate(10);
 		System.out.println(performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
 		
 		HashMap<String, Double> tagReadRate = getIndividualReadRate(10);
 		System.out.println(performanceToString(tagReadRate, "Taxa de Leitura", false));
 
-		reader.close();*/
+		reader.close();
 	}
 
 	public String performanceToString(HashMap<String, Double> properties, String propertyName, boolean percentage) {
