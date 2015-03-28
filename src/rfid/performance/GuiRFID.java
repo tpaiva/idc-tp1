@@ -1,4 +1,5 @@
 package rfid.performance;
+
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -224,22 +225,30 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 
 	}
 
-	private void setLookAndFeel() {
-		try {
-			UIManager.setLookAndFeel(UIManager
-					.getCrossPlatformLookAndFeelClassName());
-		} catch (Exception exc) {
-			// ignore error
-		}
-	}
-
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 		// TODO Auto-generated method stub
-		String answer;
 
 		if (event.getStateChange() == ItemEvent.SELECTED) {
 			selectedMetric = event.getItem().toString();
+			
+			if(selectedMetric.equals("Taxa de Leitura"))
+			{
+				timeField.setEnabled(true);
+				numReadingsField.setEnabled(false);
+			}
+				
+			if(selectedMetric.equals("Taxa de Sucesso"))
+			{
+				numReadingsField.setEnabled(true);
+				timeField.setEnabled(false);				
+			}
+			
+			if(selectedMetric.equals("Ambas"))
+			{
+				numReadingsField.setEnabled(true);
+				timeField.setEnabled(true);	
+			}	
 		}
 
 	}
@@ -249,57 +258,104 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 		// TODO Auto-generated method stub
 
 		resultsTextArea.setText("Realizando experimentos... \n");
-		printExperimentsParameters();
-
 		int rep = Integer.parseInt(repetitionsField.getText());
 		HashMap<String, Double[]> tagReadRate = null;
 		HashMap<String, Double[]> tagSuccessRate = null;
 		
-		try {
-			if (selectedMetric.equals("Taxa de Leitura")
-					|| selectedMetric.equals("Ambas")) {
-				long time = Long.valueOf(timeField.getText()).longValue();
-				System.out.println("Log: Calculando Taxa de Leitura");
-				tagReadRate = performanceTest.getIndividualReadRate(time, rep);
+		if(checkExperimentsParameters()){
+			try {
+				if (selectedMetric.equals("Taxa de Leitura")
+						|| selectedMetric.equals("Ambas")) {
+					long time = Long.valueOf(timeField.getText()).longValue();
+					System.out.println("Log: Calculando Taxa de Leitura");
+					tagReadRate = performanceTest.getIndividualReadRate(time, rep);
+				}
+				
+				if (selectedMetric.equals("Taxa de Sucesso")
+						|| selectedMetric.equals("Ambas")) {
+					int trials = Integer.parseInt(numReadingsField.getText());
+					System.out.println("Log: Calculando Taxa de Sucesso");		
+					tagSuccessRate = performanceTest.getIndividualSuccessRate(trials, rep);
+	
+				} 
+			} catch(AlienReaderException e) {
+				resultsTextArea.append("Error: " + e.toString());
+			if (selectedMetric.equals("Taxa de Leitura") || selectedMetric.equals("Ambas"))
+				resultsTextArea.setText(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));
+			if (selectedMetric.equals("Taxa de Sucesso"))
+				resultsTextArea.setText(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
+			if (selectedMetric.equals("Ambas"))
+				resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
 			}
-			
-			if (selectedMetric.equals("Taxa de Sucesso")
-					|| selectedMetric.equals("Ambas")) {
-				int trials = Integer.parseInt(numReadingsField.getText());
-				System.out.println("Log: Calculando Taxa de Sucesso");		
-				tagSuccessRate = performanceTest.getIndividualSuccessRate(trials, rep);
-
-			} 
-		} catch(AlienReaderException e) {
-			resultsTextArea.append("Error: " + e.toString());
 		}
-
-		if (selectedMetric.equals("Taxa de Leitura") || selectedMetric.equals("Ambas"))
-			resultsTextArea.setText(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));
-		if (selectedMetric.equals("Taxa de Sucesso"))
-			resultsTextArea.setText(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
-		if (selectedMetric.equals("Ambas"))
-			resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
 	}
 
-	public void printExperimentsParameters() {
+	public boolean checkExperimentsParameters() {
+		
+		boolean check = true;
+		
 		if (!selectedMetric.equals("")) {
-			resultsTextArea.append("--- Configuração do Experimento\n\n");
-			resultsTextArea.append("Métrica: " + selectedMetric + '\n');
-			if (selectedMetric.equals("Taxa de Leitura")
-					|| selectedMetric.equals("Ambas"))
-				resultsTextArea.append("Tempo: " + timeField.getText());
-			if (selectedMetric.equals("Ambas"))
-				resultsTextArea.append("\n");
-			if (selectedMetric.equals("Taxa de Sucesso")
-					|| selectedMetric.equals("Ambas"))
-				resultsTextArea.append("Número de Leituras: "
-						+ numReadingsField.getText());
-			resultsTextArea.append("\nRepetições: "
-					+ repetitionsField.getText() + "\n\n");
-		} else
-			resultsTextArea.append("(!) Definir parâmetros do experimento\n\n");
+			
+			if (selectedMetric.equals("Taxa de Leitura") || selectedMetric.equals("Ambas"))			
+				if(timeField.getText().equals(""))
+				{
+					resultsTextArea.append("(!) Defina o campo \"Tempo\"\n");
+					check = false;
+				} else {
+					if(!isNumeric(timeField.getText()))
+					{
+						resultsTextArea.append("(!) O campo \"Tempo\" deve ser um INTEIRO\n");
+						check = false;
+					}	
+				}
+					
+			if (selectedMetric.equals("Taxa de Sucesso") || selectedMetric.equals("Ambas"))
+			{
+				if(numReadingsField.getText().equals(""))
+				{
+					resultsTextArea.append("(!) Defina o campo \"Número de Leituras\"\n");
+					check = false;
+				} else {
+					if(!isNumeric(numReadingsField.getText()))
+					{
+						resultsTextArea.append("(!) O campo \"Número de Leituras\" deve ser um INTEIRO\n");
+						check = false;
+					}	
+				}
+			}
+				
+			if(repetitionsField.getText().equals(""))
+			{
+				resultsTextArea.append("(!) Defina o campo \"Repetições\"\n");
+				check = false;
+			} else {
+				if(!isNumeric(repetitionsField.getText()))
+				{
+					resultsTextArea.append("(!) O campo \"Repetições\" deve ser um INTEIRO\n");
+					check = false;
+				}	
+			}
 
+		} else {
+			resultsTextArea.append("(!) Selecione a(s) Métrica(s) do Experimento\n");
+			check = false;
+		}
+		resultsTextArea.append("\n");
+		
+		return check;	
+	}
+	
+	public boolean isNumeric(String str)  
+	{  
+		try  
+		{  
+			int number = Integer.parseInt(str);
+		} catch(NumberFormatException e)  
+		{  
+			return false;  
+		}  
+		
+		return true;
 	}
 
 	public static void main(String[] args) {

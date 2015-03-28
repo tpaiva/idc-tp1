@@ -77,9 +77,9 @@ public class ReaderPerformanceTest {
 			result += "\n";
 		}
 		if (percentage)
-			result += propertyName + " Média = " + allAvg * 100 + "%\n";
+			result += propertyName + " Média = " + String.format("%.2f", allAvg * 100) + "%\n";
 		else
-			result += propertyName + " Média = " + allAvg + "\n";
+			result += propertyName + " Média = " + String.format("%.2f", allAvg) + "\n";
 		return result;
 	}
 

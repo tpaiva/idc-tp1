@@ -1,3 +1,4 @@
 /GuiRFID.class
 /ReaderPerformanceTest.class
 /bin/
+*.DS_Store
