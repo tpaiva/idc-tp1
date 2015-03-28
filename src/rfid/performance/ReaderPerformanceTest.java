@@ -98,6 +98,17 @@ public class ReaderPerformanceTest {
 		return tagSuccessRate;
 	}
 
+	/* Obtém a taxa de leitura de cada etiqueta lida. A taxa de leitura é definida como o número de leituras
+	 * efetivas por unidade de tempo.
+	 * 
+	 * Argumentos:
+	 * 		time: duração do experimento, em segundos, em que se realiza o máximo de leituras possíveis.
+	 * 		repetitions: número de repetições do experimento.
+	 * 
+	 * Retorna:
+	 * 		Um mapa cujas chaves são os identificadores de etiquetas, do tipo String, e um arranjo de Double
+	 * 		com a taxa de leitura para cada repetição.
+	 */
 	public HashMap<String, Double[]> getIndividualReadRate(long time, int repetitions) throws AlienReaderException {
 		HashMap<String, Double[]> tagReadRate = new HashMap<String, Double[]>();
 		for (int i = 0; i < repetitions; i++) {
