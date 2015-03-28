@@ -252,20 +252,24 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 		try {
 			if (selectedMetric.equals("Taxa de Leitura")
 					|| selectedMetric.equals("Ambas")) {
+				long time = Long.valueOf(timeField.getText()).longValue();
+		
 				System.out.println("Calculo da Taxa de Leitura");
-				resultsTextArea.append("> Cálculo da Taxa de Leitura\n\n");
+				//resultsTextArea.append("> Cálculo da Taxa de Leitura\n\n");
 				
-				HashMap<String, Double> tagReadRate = performanceTest.getIndividualReadRate(10);
+				HashMap<String, Double> tagReadRate = performanceTest.getIndividualReadRate(time);
 				resultsTextArea.append(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));
 
 			}
-	
+			
 			if (selectedMetric.equals("Taxa de Sucesso")
 					|| selectedMetric.equals("Ambas")) {
+				int trials = Integer.parseInt(numReadingsField.getText());
+
 				System.out.println("Calculo da Taxa de Leitura");
-				resultsTextArea.append("> Cálculo da Taxa de Sucesso\n\n");
+				//resultsTextArea.append("> Cálculo da Taxa de Sucesso\n\n");
 				
-				HashMap<String, Double> tagSuccessRate = performanceTest.getIndividualSuccessRate(10);
+				HashMap<String, Double> tagSuccessRate = performanceTest.getIndividualSuccessRate(trials);
 				resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
 
 			}
@@ -280,13 +284,13 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 			resultsTextArea.append("Métrica: " + selectedMetric + '\n');
 			if (selectedMetric.equals("Taxa de Leitura")
 					|| selectedMetric.equals("Ambas"))
-				resultsTextArea.append("Número de Leituras: "
-						+ numReadingsField.getText());
+				resultsTextArea.append("Tempo: " + timeField.getText());
 			if (selectedMetric.equals("Ambas"))
 				resultsTextArea.append("\n");
 			if (selectedMetric.equals("Taxa de Sucesso")
 					|| selectedMetric.equals("Ambas"))
-				resultsTextArea.append("Tempo: " + timeField.getText());
+				resultsTextArea.append("Número de Leituras: "
+						+ numReadingsField.getText());
 			resultsTextArea.append("\nRepetições: "
 					+ repetitionsField.getText() + "\n\n");
 		} else
