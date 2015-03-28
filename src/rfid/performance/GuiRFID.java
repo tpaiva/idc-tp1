@@ -258,6 +258,7 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 		// TODO Auto-generated method stub
 
 		resultsTextArea.setText("Realizando experimentos... \n");
+		resultsTextArea.update(resultsTextArea.getGraphics());
 		int rep = Integer.parseInt(repetitionsField.getText());
 		HashMap<String, Double[]> tagReadRate = null;
 		HashMap<String, Double[]> tagSuccessRate = null;
@@ -270,7 +271,6 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 					System.out.println("Log: Calculando Taxa de Leitura");
 					tagReadRate = performanceTest.getIndividualReadRate(time, rep);
 				}
-				
 				if (selectedMetric.equals("Taxa de Sucesso")
 						|| selectedMetric.equals("Ambas")) {
 					int trials = Integer.parseInt(numReadingsField.getText());
@@ -280,13 +280,13 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 				} 
 			} catch(AlienReaderException e) {
 				resultsTextArea.append("Error: " + e.toString());
+			}
 			if (selectedMetric.equals("Taxa de Leitura") || selectedMetric.equals("Ambas"))
 				resultsTextArea.setText(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));
 			if (selectedMetric.equals("Taxa de Sucesso"))
 				resultsTextArea.setText(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
 			if (selectedMetric.equals("Ambas"))
 				resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
-			}
 		}
 	}
 
