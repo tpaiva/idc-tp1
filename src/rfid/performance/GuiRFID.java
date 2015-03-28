@@ -1,4 +1,5 @@
 package rfid.performance;
+
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -222,15 +223,6 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 
 	}
 
-	private void setLookAndFeel() {
-		try {
-			UIManager.setLookAndFeel(UIManager
-					.getCrossPlatformLookAndFeelClassName());
-		} catch (Exception exc) {
-			// ignore error
-		}
-	}
-
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 		// TODO Auto-generated method stub
@@ -239,6 +231,24 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 		if (event.getStateChange() == ItemEvent.SELECTED) {
 			selectedMetric = event.getItem().toString();
 			System.out.println(selectedMetric);
+			
+			if(selectedMetric.equals("Taxa de Leitura"))
+			{
+				timeField.setEnabled(true);
+				numReadingsField.setEnabled(false);
+			}
+				
+			if(selectedMetric.equals("Taxa de Sucesso"))
+			{
+				numReadingsField.setEnabled(true);
+				timeField.setEnabled(false);				
+			}
+			
+			if(selectedMetric.equals("Ambas"))
+			{
+				numReadingsField.setEnabled(true);
+				timeField.setEnabled(true);	
+			}	
 		}
 
 	}
