@@ -291,6 +291,12 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 				{
 					resultsTextArea.append("(!) Defina o campo \"Tempo\"\n");
 					check = false;
+				} else {
+					if(!isNumeric(timeField.getText()))
+					{
+						resultsTextArea.append("(!) O campo \"Tempo\" deve ser um INTEIRO\n");
+						check = false;
+					}	
 				}
 					
 			if (selectedMetric.equals("Taxa de Sucesso") || selectedMetric.equals("Ambas"))
@@ -299,6 +305,12 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 				{
 					resultsTextArea.append("(!) Defina o campo \"Número de Leituras\"\n");
 					check = false;
+				} else {
+					if(!isNumeric(numReadingsField.getText()))
+					{
+						resultsTextArea.append("(!) O campo \"Número de Leituras\" deve ser um INTEIRO\n");
+						check = false;
+					}	
 				}
 			}
 				
@@ -306,17 +318,34 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 			{
 				resultsTextArea.append("(!) Defina o campo \"Repetições\"\n");
 				check = false;
+			} else {
+				if(!isNumeric(repetitionsField.getText()))
+				{
+					resultsTextArea.append("(!) O campo \"Repetições\" deve ser um INTEIRO\n");
+					check = false;
+				}	
 			}
 
 		} else {
 			resultsTextArea.append("(!) Selecione a(s) Métrica(s) do Experimento\n");
 			check = false;
 		}
-		
 		resultsTextArea.append("\n");
 		
-		return check;
-			
+		return check;	
+	}
+	
+	public boolean isNumeric(String str)  
+	{  
+		try  
+		{  
+			int number = Integer.parseInt(str);
+		} catch(NumberFormatException e)  
+		{  
+			return false;  
+		}  
+		
+		return true;
 	}
 
 	public static void main(String[] args) {
