@@ -257,55 +257,66 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 	public void actionPerformed(ActionEvent event) {
 		// TODO Auto-generated method stub
 
-		printExperimentsParameters();
-
-		try {
-			if (selectedMetric.equals("Taxa de Leitura")
-					|| selectedMetric.equals("Ambas")) {
-				long time = Long.valueOf(timeField.getText()).longValue();
-		
-				System.out.println("Calculo da Taxa de Leitura");
-				//resultsTextArea.append("> Cálculo da Taxa de Leitura\n\n");
+		if(checkExperimentsParameters()){
+			try {
+	
+				if (selectedMetric.equals("Taxa de Leitura") || selectedMetric.equals("Ambas")) {
+						long time = Long.valueOf(timeField.getText()).longValue();
+											
+						HashMap<String, Double> tagReadRate = performanceTest.getIndividualReadRate(time);
+						resultsTextArea.append(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));					
+				} 	
 				
-				HashMap<String, Double> tagReadRate = performanceTest.getIndividualReadRate(time);
-				resultsTextArea.append(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));
-
-			}
-			
-			if (selectedMetric.equals("Taxa de Sucesso")
-					|| selectedMetric.equals("Ambas")) {
-				int trials = Integer.parseInt(numReadingsField.getText());
-
-				System.out.println("Calculo da Taxa de Leitura");
-				//resultsTextArea.append("> Cálculo da Taxa de Sucesso\n\n");
+				if (selectedMetric.equals("Taxa de Sucesso") || selectedMetric.equals("Ambas")) {
+						int trials = Integer.parseInt(numReadingsField.getText());
+						
+						HashMap<String, Double> tagSuccessRate = performanceTest.getIndividualSuccessRate(trials);
+						resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
+				}
 				
-				HashMap<String, Double> tagSuccessRate = performanceTest.getIndividualSuccessRate(trials);
-				resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
-
-			}
-		} catch(AlienReaderException e) {
-			resultsTextArea.append("Error: " + e.toString());
+			} catch(AlienReaderException e) {
+				resultsTextArea.append("Error: " + e.toString());
+			}			
 		}
 	}
 
-	public void printExperimentsParameters() {
+	public boolean checkExperimentsParameters() {
+		
+		boolean check = true;
+		
 		if (!selectedMetric.equals("")) {
-			resultsTextArea.append("--- Configuração do Experimento\n\n");
-			resultsTextArea.append("Métrica: " + selectedMetric + '\n');
-			if (selectedMetric.equals("Taxa de Leitura")
-					|| selectedMetric.equals("Ambas"))
-				resultsTextArea.append("Tempo: " + timeField.getText());
-			if (selectedMetric.equals("Ambas"))
-				resultsTextArea.append("\n");
-			if (selectedMetric.equals("Taxa de Sucesso")
-					|| selectedMetric.equals("Ambas"))
-				resultsTextArea.append("Número de Leituras: "
-						+ numReadingsField.getText());
-			resultsTextArea.append("\nRepetições: "
-					+ repetitionsField.getText() + "\n\n");
-		} else
-			resultsTextArea.append("(!) Definir parâmetros do experimento\n\n");
+			
+			if (selectedMetric.equals("Taxa de Leitura") || selectedMetric.equals("Ambas"))			
+				if(timeField.getText().equals(""))
+				{
+					resultsTextArea.append("(!) Defina o campo \"Tempo\"\n");
+					check = false;
+				}
+					
+			if (selectedMetric.equals("Taxa de Sucesso") || selectedMetric.equals("Ambas"))
+			{
+				if(numReadingsField.getText().equals(""))
+				{
+					resultsTextArea.append("(!) Defina o campo \"Número de Leituras\"\n");
+					check = false;
+				}
+			}
+				
+			if(repetitionsField.getText().equals(""))
+			{
+				resultsTextArea.append("(!) Defina o campo \"Repetições\"\n");
+				check = false;
+			}
 
+		} else {
+			resultsTextArea.append("(!) Selecione a(s) Métrica(s) do Experimento\n");
+			check = false;
+		}
+		
+		resultsTextArea.append("\n");
+		
+		return check;
+			
 	}
 
 	public static void main(String[] args) {
