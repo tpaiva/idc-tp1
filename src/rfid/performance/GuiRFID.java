@@ -219,6 +219,7 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 		try {
 			performanceTest = new ReaderPerformanceTest();
 		} catch(AlienReaderException e) {
+			resultsTextArea.append("Houver um erro de conexão com o Leitor. Tente novamente");
 			System.out.println("Error: " + e.toString());
 		}
 		resultsTextArea.append("Pronto!");
@@ -256,14 +257,17 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		// TODO Auto-generated method stub
-
-		resultsTextArea.setText("Realizando experimentos... \n");
-		resultsTextArea.update(resultsTextArea.getGraphics());
-		int rep = Integer.parseInt(repetitionsField.getText());
-		HashMap<String, Double[]> tagReadRate = null;
-		HashMap<String, Double[]> tagSuccessRate = null;
 		
+		resultsTextArea.setText("");
 		if(checkExperimentsParameters()){
+			int rep = Integer.parseInt(repetitionsField.getText());
+
+			resultsTextArea.setText("Realizando experimentos... \n");
+			resultsTextArea.update(resultsTextArea.getGraphics());
+
+			HashMap<String, Double[]> tagReadRate = null;
+			HashMap<String, Double[]> tagSuccessRate = null;
+
 			try {
 				if (selectedMetric.equals("Taxa de Leitura")
 						|| selectedMetric.equals("Ambas")) {
