@@ -214,11 +214,13 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 
 		setVisible(true);
 		
+		resultsTextArea.append("Conectando ao leitor...\n");
 		try {
 			performanceTest = new ReaderPerformanceTest();
 		} catch(AlienReaderException e) {
 			System.out.println("Error: " + e.toString());
 		}
+		resultsTextArea.append("Pronto!");
 
 	}
 
@@ -238,7 +240,6 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 
 		if (event.getStateChange() == ItemEvent.SELECTED) {
 			selectedMetric = event.getItem().toString();
-			System.out.println(selectedMetric);
 		}
 
 	}
@@ -247,35 +248,38 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 	public void actionPerformed(ActionEvent event) {
 		// TODO Auto-generated method stub
 
+		resultsTextArea.setText("Realizando experimentos... \n");
 		printExperimentsParameters();
 
+		int rep = Integer.parseInt(repetitionsField.getText());
+		HashMap<String, Double[]> tagReadRate = null;
+		HashMap<String, Double[]> tagSuccessRate = null;
+		
 		try {
 			if (selectedMetric.equals("Taxa de Leitura")
 					|| selectedMetric.equals("Ambas")) {
 				long time = Long.valueOf(timeField.getText()).longValue();
-		
-				System.out.println("Calculo da Taxa de Leitura");
-				//resultsTextArea.append("> Cálculo da Taxa de Leitura\n\n");
-				
-				HashMap<String, Double> tagReadRate = performanceTest.getIndividualReadRate(time);
-				resultsTextArea.append(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));
-
+				System.out.println("Log: Calculando Taxa de Leitura");
+				tagReadRate = performanceTest.getIndividualReadRate(time, rep);
 			}
 			
 			if (selectedMetric.equals("Taxa de Sucesso")
 					|| selectedMetric.equals("Ambas")) {
 				int trials = Integer.parseInt(numReadingsField.getText());
+				System.out.println("Log: Calculando Taxa de Sucesso");		
+				tagSuccessRate = performanceTest.getIndividualSuccessRate(trials, rep);
 
-				System.out.println("Calculo da Taxa de Leitura");
-				//resultsTextArea.append("> Cálculo da Taxa de Sucesso\n\n");
-				
-				HashMap<String, Double> tagSuccessRate = performanceTest.getIndividualSuccessRate(trials);
-				resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
-
-			}
+			} 
 		} catch(AlienReaderException e) {
 			resultsTextArea.append("Error: " + e.toString());
 		}
+
+		if (selectedMetric.equals("Taxa de Leitura") || selectedMetric.equals("Ambas"))
+			resultsTextArea.setText(performanceTest.performanceToString(tagReadRate, "Taxa de Leitura", false));
+		if (selectedMetric.equals("Taxa de Sucesso"))
+			resultsTextArea.setText(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
+		if (selectedMetric.equals("Ambas"))
+			resultsTextArea.append(performanceTest.performanceToString(tagSuccessRate, "Taxa de Sucesso", true));
 	}
 
 	public void printExperimentsParameters() {
