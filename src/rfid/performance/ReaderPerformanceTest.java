@@ -24,14 +24,19 @@ public class ReaderPerformanceTest {
 	public String performanceToString(HashMap<String, Double[]> properties, String propertyName, boolean percentage) {
 		String result = "";
 		int repetitions = properties.values().iterator().next().length;
+		HashMap<String, Double> tagAverage = calculateTagAverage(properties, repetitions);
+		HashMap<String, Double> tagSD = null;
+		if (repetitions > 1)
+			tagSD = calculateTagStandardDeviation(properties, repetitions, tagAverage);
 		result += performanceToStringIndividualRepeated(properties, propertyName, percentage, repetitions);		
-		result += performanceToStringAverage(properties, propertyName, percentage, repetitions);
+		result += performanceToStringIndividualStatistics(tagAverage, tagSD, propertyName, percentage, repetitions);
+		result += performanceToStringAggregatedStatistics(tagAverage, tagSD, propertyName, percentage);
 		result += "----------------------------\n\n\n";
 		return result;
 	}
 	
 	private String performanceToStringIndividualRepeated(HashMap<String, Double[]> properties, String propertyName, boolean percentage, int repetitions) {
-		String result = "AVALIAÇÃO DE " + propertyName.toUpperCase() + "\n\n";
+		String result = "AVALIAÇÃO DA " + propertyName.toUpperCase() + "\n\n";
 		for (int i = 0; i < repetitions; i++) {
 			result += "--- Experimento #" + (i + 1);
 			result += "\n\n";
@@ -48,38 +53,73 @@ public class ReaderPerformanceTest {
 		return result;
 	}
 	
-	private String performanceToStringAverage(HashMap<String, Double[]> properties, String propertyName, boolean percentage, int repetitions) {
+	private String performanceToStringIndividualStatistics(HashMap<String, Double> tagAverage, HashMap<String, Double> tagSD, String propertyName, boolean percentage, int repetitions) {
 		String result = "";
-		HashMap<String, Double> tagAverage = new HashMap<String, Double>();
-		double allAvg = 0.0;
-		for (String tagID : properties.keySet()) {
-			double sum = 0.0;
-			for (Double measure : properties.get(tagID)) sum += measure;
-			double average = (double) sum / repetitions;
-			tagAverage.put(tagID, average);
-			allAvg += average;
-		}
-		allAvg = allAvg / tagAverage.size();
 		if (repetitions > 1) {
-			result += "--- Média por Etiqueta";
+			result += "--- Estatísticas Empíricas de " + propertyName +  " por Etiqueta";
 			result += "\n\n";
-			result += "Etiqueta\t\t\t" + propertyName + "\n";
+			result += "Etiqueta\t\t\tMédia\tDesvioPadrão\n";
 			for (String tagID : tagAverage.keySet()) {
 				result += "" + tagID + "\t";
 				if (percentage)
-					result += tagAverage.get(tagID) * 100 + "%\n";
+					result += tagAverage.get(tagID) * 100 + "%\t" + tagSD.get(tagID) + "%\n";
 				else
-					result += tagAverage.get(tagID) + "\n";
+					result += tagAverage.get(tagID) + "\t" + tagSD.get(tagID) + "\n";
 			}
 			result += "\n";
 		}
-		if (percentage)
-			result += propertyName + " Média = " + String.format("%.2f", allAvg * 100) + "%\n";
-		else
-			result += propertyName + " Média = " + String.format("%.2f", allAvg) + "\n";
 		return result;
 	}
-
+	
+	private HashMap<String, Double> calculateTagAverage(HashMap<String, Double[]> properties, int repetitions) {
+		HashMap<String, Double> tagAverage = new HashMap<String, Double>();
+		for (String tagID : properties.keySet()) {
+			double sum = 0.0;
+			for (Double measure : properties.get(tagID))
+				sum += measure;
+			double average = (double) sum / repetitions;
+			tagAverage.put(tagID, average);
+		}
+		return tagAverage;
+	}
+	
+	private HashMap<String, Double> calculateTagStandardDeviation(HashMap<String, Double[]> properties, int repetitions, HashMap<String, Double> tagAverage) {
+		HashMap<String, Double> tagSD = new HashMap<String, Double>();
+		for (String tagID : properties.keySet()) {
+			double accum = 0.0;
+			for (Double measure : properties.get(tagID))
+				accum += Math.pow(measure - tagAverage.get(tagID), 2);
+			double sd = Math.sqrt(accum / (repetitions - 1));
+			tagSD.put(tagID, sd);
+		}
+		return tagSD;
+	}
+	
+	private String performanceToStringAggregatedStatistics(HashMap<String, Double> tagAverage, HashMap<String, Double> tagSD, String propertyName, boolean percentage) {
+		String result = "";
+		double allAvg = 0.0; 
+		double allSD = 0.0;
+		for (String tagID : tagAverage.keySet()) {
+			allAvg += tagAverage.get(tagID);
+			if (tagSD != null)
+				allSD += tagSD.get(tagID);
+		}
+		allAvg /= tagAverage.size();
+		if (tagSD != null)
+			allSD /= tagAverage.size();
+		if (percentage) {
+			result += " Média da " + propertyName + " = " + String.format("%.2f", allAvg * 100) + "%\n";
+			if (tagSD != null)
+				result += " Desvio Padrão Médio da " + propertyName + " = " + String.format("%.2f", allSD * 100) + "%\n";
+		}
+		else {
+			result += " Média da " + propertyName + " = " + String.format("%.2f", allAvg) + "\n";
+			if (tagSD != null)
+				result += " Desvio Padrão Médio da " + propertyName + " = " + String.format("%.2f", allSD) + "\n";
+		}
+		return result;
+	}
+	
 	public HashMap<String, Double[]> getIndividualSuccessRate(int trials, int repetitions) throws AlienReaderException {
 		HashMap<String, Double[]> tagSuccessRate = new HashMap<String, Double[]>();
 		for (int i = 0; i < repetitions; i++) {

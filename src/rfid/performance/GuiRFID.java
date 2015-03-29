@@ -215,14 +215,14 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 
 		setVisible(true);
 		
-		resultsTextArea.append("Conectando ao leitor...\n");
+		resultsTextArea.append("Conectando com o leitor...\n");
 		try {
 			performanceTest = new ReaderPerformanceTest();
+			resultsTextArea.append("Pronto!");
 		} catch(AlienReaderException e) {
-			resultsTextArea.append("Houver um erro de conexão com o Leitor. Tente novamente");
+			resultsTextArea.append("Houver um erro de conexão com o leitor. Tente novamente.");
 			System.out.println("Error: " + e.toString());
 		}
-		resultsTextArea.append("Pronto!");
 
 	}
 
@@ -262,7 +262,7 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 		if(checkExperimentsParameters()){
 			int rep = Integer.parseInt(repetitionsField.getText());
 
-			resultsTextArea.setText("Realizando experimentos... \n");
+			resultsTextArea.setText("Realizando experimento... \n");
 			resultsTextArea.update(resultsTextArea.getGraphics());
 
 			HashMap<String, Double[]> tagReadRate = null;
