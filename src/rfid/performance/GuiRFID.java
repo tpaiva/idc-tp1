@@ -24,6 +24,9 @@ import javax.swing.border.TitledBorder;
 
 import com.alien.enterpriseRFID.reader.AlienReaderException;
 
+/* Classe responsável pela interface gráfica do avaliador de performance
+ * de um sistema RFID.
+ */
 public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 
 	JLabel metricsLabel = new JLabel("Métrica: ", JLabel.LEFT);
@@ -43,10 +46,8 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 	 * pela qual a interação com os usuários é realizada.
 	 *
 	 * Argumentos:
-	 * 		sem argumentos
+	 * 		Não possui.
 	 * 
-	 * Retorna:
-	 * 		sem tipo de retorno
 	 */
 	public GuiRFID() {
 		super("RFID");
@@ -276,6 +277,7 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 	 *
 	 * Argumentos:
 	 * 		event: evento gerado pelo usuário ao clicar no botão "Executar" da interface.
+	 * 
 	 * Retorna:
 	 * 		void
 	 */
