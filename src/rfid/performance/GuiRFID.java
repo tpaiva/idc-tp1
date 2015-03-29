@@ -39,6 +39,15 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 	String selectedMetric = "";
 	ReaderPerformanceTest performanceTest;
 
+	/* Construtor da janela que contém e organiza os componentes da interface gráfica 
+	 * pela qual a interação com os usuários é realizada.
+	 *
+	 * Argumentos:
+	 * 		sem argumentos
+	 * 
+	 * Retorna:
+	 * 		sem tipo de retorno
+	 */
 	public GuiRFID() {
 		super("RFID");
 		setSize(1000, 700); // (width, height)
@@ -226,6 +235,14 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 
 	}
 
+	/* Define a sequência de ações executadas quando uma das opções do campo "Métrica" é selecionada.
+	 * Dependendo da métrica selecionada, alguns campos podem ser desativados.
+	 *
+	 * Argumentos:
+	 * 		event: evento gerado pelo usuário ao selecionar um item do campo "Métrica".
+	 * Retorna:
+	 * 		void
+	 */
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 		// TODO Auto-generated method stub
@@ -253,7 +270,15 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 		}
 
 	}
-
+	
+	/* Define a sequência de ações executadas quando o botão "Executar" é acionado. Inclui a verificação dos 
+	 * campos da interface e o cálculo e exibição dos valores da(s) métrica(s) selecionada(s).
+	 *
+	 * Argumentos:
+	 * 		event: evento gerado pelo usuário ao clicar no botão "Executar" da interface.
+	 * Retorna:
+	 * 		void
+	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		// TODO Auto-generated method stub
@@ -294,6 +319,15 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 		}
 	}
 
+	/* Verifica se os campos editáveis da interface foram preenchidos com valores inteiros. 
+	 * Define as mensagens que indicam se um campo não foi preenchido ou foi preenchido incorretamente. 
+	 *
+	 * Argumentos:
+	 * 		sem argumentos
+	 * 
+	 * Retorna:
+	 * 		"True" se todos os campos forem válidos e "false" caso contrário.
+	 */
 	public boolean checkExperimentsParameters() {
 		
 		boolean check = true;
@@ -349,6 +383,14 @@ public class GuiRFID extends JFrame implements ActionListener, ItemListener {
 		return check;	
 	}
 	
+	/* Verifica se o valor digitado nos campos editáveis da interface são inteiros
+	 * 
+	 * Argumentos:
+	 * 		str: texto do campo editável da interface.
+	 * 
+	 * Retorna:
+	 * 		"True" se o campo for um inteiro válido e "false" caso contrário.
+	 */
 	public boolean isNumeric(String str)  
 	{  
 		try  
