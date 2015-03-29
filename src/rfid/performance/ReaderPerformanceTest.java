@@ -49,7 +49,7 @@ public class ReaderPerformanceTest {
 		result += performanceToStringIndividualRepeated(properties, propertyName, percentage, repetitions);		
 		result += performanceToStringIndividualStatistics(tagAverage, tagSD, propertyName, percentage, repetitions);
 		result += performanceToStringAggregatedStatistics(tagAverage, tagSD, propertyName, percentage);
-		result += "----------------------------\n\n\n";
+		result += "\n----------------------------\n\n\n";
 		return result;
 	}
 	
@@ -147,15 +147,15 @@ public class ReaderPerformanceTest {
 	private String performanceToStringIndividualStatistics(HashMap<String, Double> tagAverage, HashMap<String, Double> tagSD, String propertyName, boolean percentage, int repetitions) {
 		String result = "";
 		if (repetitions > 1) {
-			result += "--- Estatísticas Empíricas de " + propertyName +  " por Etiqueta";
+			result += "--- Estatísticas por Etiqueta";
 			result += "\n\n";
-			result += "Etiqueta\t\t\tMédia\tDesvioPadrão\n";
+			result += "Etiqueta\t\t\tMédia\tDesvio Padrão\n";
 			for (String tagID : tagAverage.keySet()) {
 				result += "" + tagID + "\t";
 				if (percentage)
-					result += tagAverage.get(tagID) * 100 + "%\t" + tagSD.get(tagID) + "%\n";
+					result += String.format("%.2f", tagAverage.get(tagID) * 100) + "%\t" + String.format("%.2f", tagSD.get(tagID)) + "%\n";
 				else
-					result += tagAverage.get(tagID) + "\t" + tagSD.get(tagID) + "\n";
+					result += String.format("%.2f", tagAverage.get(tagID)) + "\t" + String.format("%.2f", tagSD.get(tagID)) + "\n";
 			}
 			result += "\n";
 		}
@@ -177,7 +177,7 @@ public class ReaderPerformanceTest {
 	 * 		Uma String contendo o relatório de performance para uma etiqueta média.
 	 */
 	private String performanceToStringAggregatedStatistics(HashMap<String, Double> tagAverage, HashMap<String, Double> tagSD, String propertyName, boolean percentage) {
-		String result = "";
+		String result = "--- Estatísticas Gerais\n\n";
 		double allAvg = 0.0; 
 		double allSD = 0.0;
 		for (String tagID : tagAverage.keySet()) {
@@ -189,14 +189,14 @@ public class ReaderPerformanceTest {
 		if (tagSD != null)
 			allSD /= tagAverage.size();
 		if (percentage) {
-			result += " Média da " + propertyName + " = " + String.format("%.2f", allAvg * 100) + "%\n";
+			result += " Média da " + propertyName + "\t\t" + String.format("%.2f", allAvg * 100) + "%\n";
 			if (tagSD != null)
-				result += " Desvio Padrão Médio da " + propertyName + " = " + String.format("%.2f", allSD * 100) + "%\n";
+				result += " Desvio Padrão Médio da " + propertyName + "\t" + String.format("%.2f", allSD * 100) + "%\n";
 		}
 		else {
-			result += " Média da " + propertyName + " = " + String.format("%.2f", allAvg) + "\n";
+			result += " Média da " + propertyName + "\t\t" + String.format("%.2f", allAvg) + "\n";
 			if (tagSD != null)
-				result += " Desvio Padrão Médio da " + propertyName + " = " + String.format("%.2f", allSD) + "\n";
+				result += " Desvio Padrão Médio da " + propertyName + "\t" + String.format("%.2f", allSD) + "\n";
 		}
 		return result;
 	}
