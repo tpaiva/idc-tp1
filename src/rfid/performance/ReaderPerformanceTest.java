@@ -1,7 +1,6 @@
 package rfid.performance;
 
 import java.util.HashMap;
-import java.util.stream.DoubleStream;
 
 import com.alien.enterpriseRFID.reader.AlienClass1Reader;
 import com.alien.enterpriseRFID.reader.AlienReaderException;
@@ -26,6 +25,7 @@ public class ReaderPerformanceTest {
 		reader.setUsername("alien");
 		reader.setPassword("password");
 		reader.open();
+		
 		System.out.println("Log: Conectado ao Leitor");
 	}
 
@@ -118,11 +118,15 @@ public class ReaderPerformanceTest {
 			result += "\n\n";
 			result += "Etiqueta\t\t\t" + propertyName + "\n";
 			for (String tagID : properties.keySet()) {
-				result += "" + tagID + "\t";
+				result += tagID;
+				if (tagID.length() < 29) {
+					for (int j = 0; j < 29 - tagID.length(); j++)
+						result += "  ";
+				}
 				if (percentage)
-					result += properties.get(tagID)[i] * 100 + "%\n";
+					result += "\t" + properties.get(tagID)[i] * 100 + "%\n";
 				else
-					result += properties.get(tagID)[i] + "\n";
+					result += "\t" + properties.get(tagID)[i] + "\n";
 			}
 			result += "\n";
 		}
@@ -151,11 +155,15 @@ public class ReaderPerformanceTest {
 			result += "\n\n";
 			result += "Etiqueta\t\t\tMédia\tDesvio Padrão\n";
 			for (String tagID : tagAverage.keySet()) {
-				result += "" + tagID + "\t";
+				result += tagID;
+				if (tagID.length() < 29) {
+					for (int i = 0; i < 29 - tagID.length(); i++)
+						result += "  ";
+				}
 				if (percentage)
-					result += String.format("%.2f", tagAverage.get(tagID) * 100) + "%\t" + String.format("%.2f", tagSD.get(tagID)) + "%\n";
+					result += String.format("\t%.2f", tagAverage.get(tagID) * 100) + "%\t" + String.format("%.2f", tagSD.get(tagID) * 100) + "%\n";
 				else
-					result += String.format("%.2f", tagAverage.get(tagID)) + "\t" + String.format("%.2f", tagSD.get(tagID)) + "\n";
+					result += String.format("\t%.2f", tagAverage.get(tagID)) + "\t" + String.format("%.2f", tagSD.get(tagID)) + "\n";
 			}
 			result += "\n";
 		}
@@ -219,13 +227,18 @@ public class ReaderPerformanceTest {
 			Tag[] tagList = null;
 			for (int j = 0; j < trials; j++) {
 				tagList = reader.getTagList();
+				for (Tag tag : tagList) {
+					if (!tagSuccessRate.containsKey(tag.getTagID())) {
+						tagSuccessRate.put(tag.getTagID(), new Double[repetitions]);
+						for (int k = 0; k < repetitions; k++)
+							tagSuccessRate.get(tag.getTagID())[k] = Double.valueOf(0.0);
+					}
+					tagSuccessRate.get(tag.getTagID())[i] += Double.valueOf(1.0);
+					// se alguma repetição tiver zero leituras, o valor será zero, que é igual à taxa de sucesso
+				}
 			}
-			for (Tag tag : tagList) {
-				if (!tagSuccessRate.containsKey(tag.getTagID()))
-					tagSuccessRate.put(tag.getTagID(), new Double[repetitions]);
-				tagSuccessRate.get(tag.getTagID())[i] = Double.valueOf((double) tag.getRenewCount() / trials);
-				// se alguma repetição tiver zero leituras, o valor será zero, que é igual à taxa de sucesso
-			}
+			for (Tag tag : tagList)
+				tagSuccessRate.get(tag.getTagID())[i] /= Double.valueOf(trials);
 		}
 		return tagSuccessRate;
 	}
@@ -249,13 +262,20 @@ public class ReaderPerformanceTest {
 			Tag[] tagList = null;
 			long start = System.currentTimeMillis();
 			long end = start + (time * 1000);
-			while (System.currentTimeMillis() < end)
+			while (System.currentTimeMillis() < end) {
 				tagList = reader.getTagList();
-			for (Tag tag : tagList) {
-				if (!tagReadRate.containsKey(tag.getTagID()))
-					tagReadRate.put(tag.getTagID(), new Double[repetitions]);
-				tagReadRate.get(tag.getTagID())[i] = Double.valueOf((double) tag.getRenewCount() / time);
+				for (Tag tag : tagList) {
+					if (!tagReadRate.containsKey(tag.getTagID())) {
+						tagReadRate.put(tag.getTagID(), new Double[repetitions]);
+						for (int j = 0; j < repetitions; j++)
+							tagReadRate.get(tag.getTagID())[j] = Double.valueOf(0.0);
+					}
+					tagReadRate.get(tag.getTagID())[i] += Double.valueOf(1.0);
+				}
 			}
+			for (Tag tag : tagList)
+				tagReadRate.get(tag.getTagID())[i] /= Double.valueOf(time);
+			
 		}
 		return tagReadRate;
 	}
