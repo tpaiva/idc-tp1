@@ -227,6 +227,9 @@ public class ReaderPerformanceTest {
 			Tag[] tagList = null;
 			for (int j = 0; j < trials; j++) {
 				tagList = reader.getTagList();
+				if (tagList == null) {
+					continue;
+				}
 				for (Tag tag : tagList) {
 					if (!tagSuccessRate.containsKey(tag.getTagID())) {
 						tagSuccessRate.put(tag.getTagID(), new Double[repetitions]);
@@ -237,8 +240,8 @@ public class ReaderPerformanceTest {
 					// se alguma repetição tiver zero leituras, o valor será zero, que é igual à taxa de sucesso
 				}
 			}
-			for (Tag tag : tagList)
-				tagSuccessRate.get(tag.getTagID())[i] /= Double.valueOf(trials);
+			for (String tagID : tagSuccessRate.keySet())
+				tagSuccessRate.get(tagID)[i] /= Double.valueOf(trials);
 		}
 		return tagSuccessRate;
 	}
@@ -264,6 +267,9 @@ public class ReaderPerformanceTest {
 			long end = start + (time * 1000);
 			while (System.currentTimeMillis() < end) {
 				tagList = reader.getTagList();
+				if (tagList == null) {
+					continue;
+				}
 				for (Tag tag : tagList) {
 					if (!tagReadRate.containsKey(tag.getTagID())) {
 						tagReadRate.put(tag.getTagID(), new Double[repetitions]);
@@ -273,8 +279,8 @@ public class ReaderPerformanceTest {
 					tagReadRate.get(tag.getTagID())[i] += Double.valueOf(1.0);
 				}
 			}
-			for (Tag tag : tagList)
-				tagReadRate.get(tag.getTagID())[i] /= Double.valueOf(time);
+			for (String tagID : tagReadRate.keySet())
+				tagReadRate.get(tagID)[i] /= Double.valueOf(time);
 			
 		}
 		return tagReadRate;
