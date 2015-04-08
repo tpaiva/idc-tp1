@@ -27,6 +27,8 @@ public class ReaderPerformanceTest {
 		reader.open();
 		
 		System.out.println("Log: Conectado ao Leitor");
+		System.out.println("Log: Persist Time = " + reader.getPersistTime());
+		reader.setPersistTime(-1);
 	}
 
 	/* Obtém uma String com o relatório de performance de determinada métrica.
@@ -235,9 +237,9 @@ public class ReaderPerformanceTest {
 						tagSuccessRate.put(tag.getTagID(), new Double[repetitions]);
 						for (int k = 0; k < repetitions; k++)
 							tagSuccessRate.get(tag.getTagID())[k] = Double.valueOf(0.0);
+							// se alguma repetição tiver zero leituras, o valor será zero, que é igual à taxa de sucesso
 					}
 					tagSuccessRate.get(tag.getTagID())[i] += Double.valueOf(1.0);
-					// se alguma repetição tiver zero leituras, o valor será zero, que é igual à taxa de sucesso
 				}
 			}
 			for (String tagID : tagSuccessRate.keySet())
